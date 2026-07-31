@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  users           User[]
+  rolePermissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       Int
+  permissionId Int
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  firstName    String?  @map("first_name")
+  lastName     String?  @map("last_name")
+  phone        String?
+  roleId       Int      @default(4) @map("role_id")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  properties       Property[]        @relation("property_creator")
+  estimationThreads EstimationThread[]
+  forumReplies     ForumReply[]
+  role             Role               @relation(fields: [roleId], references: [id])
+
+  @@map("users")
+}
+
+model Category {
+  id               Int                @id @default(autoincrement())
+  name             String             @unique
+
+  properties       Property[]
+  estimationThreads EstimationThread[]
+
+  @@map("categories")
+}
+
+model TransactionType {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  properties Property[]
+
+  @@map("transaction_types")
+}
+
+model Property {
+  id                  String   @id @default(uuid())
+  title               String
+  description         String?
+  price               Decimal
+  status              String   @default("disponible")
+  categoryId          Int?     @map("category_id")
+  transactionTypeId   Int?     @map("transaction_type_id")
+  address             String
+  city                String
+  latitude            Decimal?
+  longitude           Decimal?
+  specificAttributes  String   @map("specific_attributes") @default("{}")
+  createdBy           String?  @map("created_by")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  category        Category?        @relation(fields: [categoryId], references: [id])
+  transactionType TransactionType? @relation(fields: [transactionTypeId], references: [id])
+  creator         User?            @relation("property_creator", fields: [createdBy], references: [id], onDelete: SetNull)
+  images          PropertyImage[]
+
+  @@map("properties")
+}
+
+model PropertyImage {
+  id         Int      @id @default(autoincrement())
+  propertyId String   @map("property_id")
+  imageUrl   String   @map("image_url")
+  isMain     Boolean  @default(false) @map("is_main")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("property_images")
+}
+
+model EstimationThread {
+  id                   String    @id @default(uuid())
+  userId               String?   @map("user_id")
+  title                String
+  propertyDescription  String    @map("property_description")
+  approximateLocation  String    @map("approximate_location")
+  propertyType         Int?      @map("property_type")
+  status               String    @default("open")
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  user    User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category?     @relation(fields: [propertyType], references: [id])
+  replies ForumReply[]
+
+  @@map("estimation_threads")
+}
+
+model ForumReply {
+  id                        String   @id @default(uuid())
+  threadId                  String   @map("thread_id")
+  userId                    String?  @map("user_id")
+  comment                   String
+  estimatedValueSuggestion  Decimal? @map("estimated_value_suggestion")
+  parentReplyId             String?  @map("parent_reply_id")
+  createdAt                 DateTime @default(now()) @map("created_at")
+
+  thread       EstimationThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user         User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  parentReply  ForumReply?      @relation("reply_parent", fields: [parentReplyId], references: [id], onDelete: Cascade)
+  children     ForumReply[]     @relation("reply_parent")
+
+  @@map("forum_replies")
+}

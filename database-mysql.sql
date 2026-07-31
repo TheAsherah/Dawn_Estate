@@ -1,0 +1,91 @@
+-- -- Dawn Estate MySQL Database Schema
+
+-- -- Create Database
+-- CREATE DATABASE IF NOT EXISTS dawn_estate;
+-- USE dawn_estate;
+
+-- -- Users table
+-- CREATE TABLE IF NOT EXISTS users (
+--   id VARCHAR(36) PRIMARY KEY,
+--   email VARCHAR(191) UNIQUE NOT NULL,
+--   password VARCHAR(255) NOT NULL, -- Added for custom auth
+--   first_name VARCHAR(100) NOT NULL,
+--   last_name VARCHAR(100) NOT NULL,
+--   phone VARCHAR(20),
+--   role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
+--   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-- );
+
+-- -- Properties table
+-- CREATE TABLE IF NOT EXISTS properties (
+--   id VARCHAR(36) PRIMARY KEY,
+--   user_id VARCHAR(36),
+--   first_name VARCHAR(100) NOT NULL,
+--   last_name VARCHAR(100) NOT NULL,
+--   category ENUM('villa', 'house', 'apartment', 'studio', 'land') NOT NULL,
+--   prestation ENUM('sale', 'rent') NOT NULL,
+--   city VARCHAR(100) NOT NULL,
+--   address TEXT NOT NULL,
+--   surface INT NOT NULL,
+--   bedrooms INT NOT NULL DEFAULT 0,
+--   bathrooms INT NOT NULL DEFAULT 0,
+--   pool BOOLEAN NOT NULL DEFAULT FALSE,
+--   price DECIMAL(12, 2) NOT NULL,
+--   images JSON, -- MySQL supports JSON
+--   videos JSON,
+--   status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+--   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+--   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+-- );
+
+-- -- Estimations table
+-- CREATE TABLE IF NOT EXISTS estimations (
+--   id VARCHAR(36) PRIMARY KEY,
+--   name VARCHAR(255) NOT NULL,
+--   email VARCHAR(191) NOT NULL,
+--   phone VARCHAR(20) NOT NULL,
+--   property_type VARCHAR(100) NOT NULL,
+--   city VARCHAR(100) NOT NULL,
+--   surface INT NOT NULL,
+--   message TEXT,
+--   images JSON,
+--   videos JSON,
+--   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
+
+-- -- Default Admin User (Password: Admin@2024!)
+-- INSERT INTO users (id, email, password, first_name, last_name, role)
+-- VALUES (
+--   'admin-uuid-001', 
+--   'admin@dawnestate.com', 
+--   '$2b$10$j9UmvtUXkyO0bucnoymY8e88lpyZMF1MMKpxV36etsJ/KHXYJlHyAu', -- Bcrypt hash for Admin@2024!
+--   'Admin', 
+--   'Dawn Estate', 
+--   'admin'
+-- );
+
+-- -- Sample Properties for Testing (All in Marrakech)
+-- INSERT INTO properties (id, user_id, first_name, last_name, category, prestation, city, address, surface, bedrooms, bathrooms, pool, price, images, videos, status)
+-- VALUES 
+-- (
+--   'prop-001', 'admin-uuid-001', 'Admin', 'Dawn', 'villa', 'sale', 'Marrakech', 'Palmeraie III, Circuit de la Palmeraie, Villa 42', 450, 5, 4, TRUE, 1200000.00, 
+--   '["https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2071&auto=format&fit=crop"]', '[]', 'approved'
+-- ),
+-- (
+--   'prop-002', 'admin-uuid-001', 'Admin', 'Dawn', 'apartment', 'rent', 'Marrakech', 'Hivernage, Résidence Les Jardins, Appt 12', 120, 3, 2, FALSE, 15000.00, 
+--   '["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070&auto=format&fit=crop"]', '[]', 'approved'
+-- ),
+-- (
+--   'prop-003', 'admin-uuid-001', 'Admin', 'Dawn', 'house', 'sale', 'Marrakech', 'Gueliz, Rue de la Liberté, Maison 7', 280, 4, 3, TRUE, 850000.00, 
+--   '["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop"]', '[]', 'approved'
+-- ),
+-- (
+--   'prop-004', 'admin-uuid-001', 'Admin', 'Dawn', 'studio', 'rent', 'Marrakech', 'Targa, Résidence Al Kamar, Studio 3', 45, 1, 1, FALSE, 4500.00, 
+--   '["https://images.unsplash.com/photo-1536376074432-ad71745aa194?q=80&w=2070&auto=format&fit=crop"]', '[]', 'pending'
+-- ),
+-- (
+--   'prop-005', 'admin-uuid-001', 'Admin', 'Dawn', 'land', 'sale', 'Marrakech', 'Route d''Amizmiz, Km 12, Lot 101', 1000, 0, 0, FALSE, 350000.00, 
+--   '["https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2232&auto=format&fit=crop"]', '[]', 'approved'
+-- );
