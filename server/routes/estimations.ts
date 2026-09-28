@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import prisma from '../db.js';
-import { authenticateToken } from '../middleware/auth.js';
+import { authenticateToken, optionalAuthenticateToken } from '../middleware/auth.js';
 import { hasAuthUser } from '../types.js';
 import { sendServerError } from '../utils/errors.js';
 
 export const estimationsRouter = Router();
 
-estimationsRouter.post('/', async (req, res) => {
+estimationsRouter.post('/', optionalAuthenticateToken, async (req, res) => {
     try {
         const id = uuidv4();
         const { name, email, phone, propertyType, city, surface, message, images, videos } = req.body;
@@ -21,11 +21,26 @@ estimationsRouter.post('/', async (req, res) => {
                 propertyDescription: [message, email, phone].filter(Boolean).join(' | '),
                 approximateLocation: city || 'Unknown',
                 propertyType: typeof propertyType === 'number' ? propertyType : null,
-                status: 'open'
+                status: 'open',
+                userId: req.user?.id ?? null
             }
         });
 
         res.json({ success: true, estimationId: id });
+    } catch (error) {
+        sendServerError(res, error);
+    }
+});
+
+estimationsRouter.get('/mine', authenticateToken, async (req, res) => {
+    try {
+        if (!hasAuthUser(req)) return res.status(401).json({ error: 'Unauthorized' });
+        const estimationModel = (prisma as any).estimationThread ?? (prisma as any).estimation;
+        const estimations = await estimationModel.findMany({
+            where: { userId: req.user.id },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json({ estimations });
     } catch (error) {
         sendServerError(res, error);
     }

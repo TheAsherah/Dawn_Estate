@@ -52,14 +52,14 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-warm-brown flex items-center justify-center px-6 py-20">
+    <div className="min-h-screen bg-background text-foreground selection:bg-warm-brown flex items-center justify-center px-6 py-20">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="w-full max-w-lg"
       >
-        <div className="bg-[#0a0a0a] border border-white/5 p-12 md:p-16 space-y-12">
+        <div className="bg-card border border-border p-12 md:p-16 space-y-12">
           {/* Logo & Header */}
           <div className="text-center space-y-6">
             <div className="w-12 h-12 border border-warm-brown flex items-center justify-center mx-auto transition-transform duration-500 hover:rotate-45">
@@ -75,72 +75,72 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-2 gap-8">
               <div className="space-y-3">
-                <Label htmlFor="firstName" className="text-[10px] uppercase tracking-widest text-white/40">{t('firstName')}</Label>
+                <Label htmlFor="firstName" className="text-[10px] uppercase tracking-widest text-muted-foreground">{t('firstName')}</Label>
                 <Input
                   id="firstName"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                   required
-                  className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                  className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
                 />
               </div>
               <div className="space-y-3">
-                <Label htmlFor="lastName" className="text-[10px] uppercase tracking-widest text-white/40">{t('lastName')}</Label>
+                <Label htmlFor="lastName" className="text-[10px] uppercase tracking-widest text-muted-foreground">{t('lastName')}</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                   required
-                  className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                  className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
                 />
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="email" className="text-[10px] uppercase tracking-widest text-white/40">{t('emailAddress')}</Label>
+              <Label htmlFor="email" className="text-[10px] uppercase tracking-widest text-muted-foreground">{t('emailAddress')}</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
-                className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
               />
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-white/40">{t('phone')}</Label>
+              <Label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-muted-foreground">{t('phone')}</Label>
               <Input
                 id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-3">
-                <Label htmlFor="password" className="text-[10px] uppercase tracking-widest text-white/40">{t('password')}</Label>
+                <Label htmlFor="password" className="text-[10px] uppercase tracking-widest text-muted-foreground">{t('password')}</Label>
                 <Input
                   id="password"
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
-                  className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                  className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
                 />
               </div>
 
               <div className="space-y-3">
-                <Label htmlFor="confirmPassword" className="text-[10px] uppercase tracking-widest text-white/40">{t('confirmPassword')}</Label>
+                <Label htmlFor="confirmPassword" className="text-[10px] uppercase tracking-widest text-muted-foreground">{t('confirmPassword')}</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   required
-                  className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                  className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
                 />
               </div>
             </div>
@@ -155,12 +155,12 @@ export function RegisterPage({ onNavigate }: RegisterPageProps) {
           </form>
 
           {/* Login Link */}
-          <div className="pt-8 text-center border-t border-white/5">
-            <p className="text-xs text-white/40 tracking-widest uppercase">
+          <div className="pt-8 text-center border-t border-border">
+            <p className="text-xs text-muted-foreground tracking-widest uppercase">
               {t('alreadyHaveAccount')}{' '}
               <button
                 onClick={() => onNavigate('login')}
-                className="text-warm-brown hover:text-white transition-colors font-bold ml-2"
+                className="text-warm-brown hover:text-foreground transition-colors font-bold ml-2"
               >
                 {t('login')}
               </button>

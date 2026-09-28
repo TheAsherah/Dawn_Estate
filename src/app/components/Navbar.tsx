@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Menu, X, Globe, User, LogOut, LayoutDashboard } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Menu, X, Globe, User, LogOut, LayoutDashboard, Moon, Sun } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -19,7 +19,12 @@ interface NavbarProps {
 
 export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps) {
   const { language, setLanguage, t } = useLanguage();
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout } = useAuth();
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'light';
+    return (window.localStorage.getItem('dawn-theme') as 'light' | 'dark' | null) ?? 'light';
+  });
+  const isDark = theme === 'dark';
   const logoSrc = '/uploads/logoooooooooo.png';
   const languageOptions = [
     { code: 'en' as const, label: 'EN' },
@@ -35,8 +40,14 @@ export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps
     { key: 'contact', label: t('contact') },
   ];
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+    window.localStorage.setItem('dawn-theme', isDark ? 'dark' : 'light');
+  }, [isDark]);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 transition-all duration-300">
+    <nav className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b transition-all duration-300 ${isDark ? 'bg-black/80 border-white/10' : 'bg-white/90 border-black/10 shadow-sm'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
@@ -44,11 +55,11 @@ export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps
             onClick={() => onNavigate('home')}
             className="flex items-center space-x-4 group"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 overflow-hidden flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
+            <div className="w-16 h-16 sm:w-18 sm:h-18 overflow-hidden flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
               <img src={logoSrc} alt="Dawn Estate logo" className="w-full h-full object-contain" />
             </div>
             <div className="hidden sm:block text-left pt-2 -ml-1">
-              <h1 className="text-xl font-serif tracking-widest text-white m-0 leading-none">
+              <h1 className={`text-xl font-serif tracking-widest m-0 leading-none ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 DAWN ESTATE
               </h1>
               <p className="text-[10px] uppercase tracking-[0.2em] text-warm-brown mt-0.5">{t('exclusiveProperties')}</p>
@@ -63,7 +74,7 @@ export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps
                 onClick={() => onNavigate(link.key)}
                 className={`text-xs uppercase tracking-widest font-medium transition-all duration-300 relative py-2 ${currentPage === link.key
                   ? 'text-warm-brown'
-                  : 'text-white/70 hover:text-warm-brown'
+                  : isDark ? 'text-white/70 hover:text-warm-brown' : 'text-slate-600 hover:text-warm-brown'
                   }`}
               >
                 {link.label}
@@ -79,19 +90,30 @@ export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-6">
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              className={`rounded-full p-2 ${isDark ? 'text-white/70 hover:text-white hover:bg-white/5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}
+              aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
+
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2 text-white/70 hover:text-white hover:bg-white/5 uppercase text-[10px] tracking-widest">
+                <Button variant="ghost" size="sm" className={`gap-2 uppercase text-[10px] tracking-widest ${isDark ? 'text-white/70 hover:text-white hover:bg-white/5' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}`}>
                   <Globe className="w-3 h-3" />
                   <span>{language.toUpperCase()}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-black border-white/10 text-white">
+              <DropdownMenuContent align="end" className={`${isDark ? 'bg-black border-white/10 text-white' : 'bg-white border-slate-200 text-slate-900'}`}>
                 {languageOptions.map((option) => (
                   <DropdownMenuItem
                     key={option.code}
-                    className="hover:bg-white/10 focus:bg-white/10"
+                    className={isDark ? 'hover:bg-white/10 focus:bg-white/10' : 'hover:bg-slate-100 focus:bg-slate-100'}
                     onSelect={() => setLanguage(option.code)}
                   >
                     {option.label}
@@ -104,8 +126,8 @@ export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2 border-white/10 hover:border-warm-brown text-[10px] tracking-widest uppercase bg-transparent text-white">
-                    <div className="w-6 h-6 rounded-full overflow-hidden border border-white/10 bg-white/5 flex items-center justify-center">
+                  <Button variant="outline" size="sm" className={`gap-2 text-[10px] tracking-widest uppercase bg-transparent ${isDark ? 'border-white/10 hover:border-warm-brown text-white' : 'border-slate-200 hover:border-warm-brown text-slate-900'}`}>
+                    <div className={`w-6 h-6 rounded-full overflow-hidden border flex items-center justify-center ${isDark ? 'border-white/10 bg-white/5' : 'border-slate-200 bg-slate-100'}`}>
                       {user.avatarUrl ? (
                         <img src={user.avatarUrl} alt={user.firstName} className="w-full h-full object-cover" />
                       ) : (
@@ -117,14 +139,14 @@ export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-black border-white/10 text-white">
-                  {isAdmin && (
-                    <DropdownMenuItem className="hover:bg-white/10 focus:bg-white/10" onSelect={() => onNavigate('dashboard')}>
+                <DropdownMenuContent align="end" className={`${isDark ? 'bg-black border-white/10 text-white' : 'bg-white border-slate-200 text-slate-900'}`}>
+                  {user && (
+                    <DropdownMenuItem className={isDark ? 'hover:bg-white/10 focus:bg-white/10' : 'hover:bg-slate-100 focus:bg-slate-100'} onSelect={() => onNavigate('dashboard')}>
                       <LayoutDashboard className="w-3 h-3 mr-2 text-warm-brown" />
                       {t('dashboard')}
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem className="hover:bg-white/10 focus:bg-white/10" onSelect={logout}>
+                  <DropdownMenuItem className={isDark ? 'hover:bg-white/10 focus:bg-white/10' : 'hover:bg-slate-100 focus:bg-slate-100'} onSelect={logout}>
                     <LogOut className="w-3 h-3 mr-2 text-red-500" />
                     {t('logout')}
                   </DropdownMenuItem>
@@ -134,7 +156,7 @@ export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps
               <div className="hidden sm:flex items-center space-x-4">
                 <button
                   onClick={() => onNavigate('login')}
-                  className="text-[10px] uppercase tracking-widest text-white/70 hover:text-white transition-colors"
+                  className={`text-[10px] uppercase tracking-widest transition-colors ${isDark ? 'text-white/70 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}
                 >
                   {t('login')}
                 </button>
@@ -151,7 +173,7 @@ export function Navbar({ onNavigate, currentPage, onToggleSidebar }: NavbarProps
             {/* Mobile Menu Button */}
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 text-white/70 hover:text-white transition-colors"
+              className={`lg:hidden p-2 transition-colors ${isDark ? 'text-white/70 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}
             >
               <Menu className="w-6 h-6" />
             </button>

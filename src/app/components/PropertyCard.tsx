@@ -28,11 +28,16 @@ export function PropertyCard({ property, onNavigate }: PropertyCardProps) {
   const { t, language } = useLanguage();
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(language === 'ar' ? 'ar-MA' : language === 'fr' ? 'fr-FR' : 'en-US', {
+    const parts = new Intl.NumberFormat(language === 'ar' ? 'ar-MA' : language === 'fr' ? 'fr-FR' : 'en-US', {
       style: 'currency',
       currency: 'MAD',
       minimumFractionDigits: 0,
-    }).format(price);
+    }).formatToParts(price);
+
+    return {
+      amount: parts.filter((part) => part.type !== 'currency' && part.type !== 'literal').map((part) => part.value).join('').trim(),
+      currency: parts.find((part) => part.type === 'currency')?.value || 'MAD',
+    };
   };
 
   const defaultImage = "https://images.unsplash.com/photo-1622015663381-d2e05ae91b72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjB2aWxsYSUyMG1vZGVybiUyMGFyY2hpdGVjdHVyZXxlbnwxfHx8fDE3Njk4Mjk2OTN8MA&ixlib=rb-4.1.0&q=80&w=1080";
@@ -51,7 +56,7 @@ export function PropertyCard({ property, onNavigate }: PropertyCardProps) {
           <Badge className="bg-warm-brown text-white text-[10px] tracking-[0.2em] uppercase rounded-none px-4 py-1.5 border-none">
             {t(property.prestation as any)}
           </Badge>
-          <Badge className="bg-black/80 backdrop-blur-md text-white text-[10px] tracking-[0.2em] uppercase rounded-none px-4 py-1.5 border border-white/10">
+          <Badge className="bg-background/90 backdrop-blur-md text-foreground text-[10px] tracking-[0.2em] uppercase rounded-none px-4 py-1.5 border border-border">
             {t(property.category as any)}
           </Badge>
         </div>
@@ -77,16 +82,19 @@ export function PropertyCard({ property, onNavigate }: PropertyCardProps) {
             <MapPin className="w-3 h-3 mr-2" />
             <span className="text-[10px] uppercase tracking-[0.3em] font-medium">{property.address || property.city}</span>
           </div>
-          <h3 className="text-2xl font-serif text-white group-hover:text-warm-brown transition-colors duration-300">
-            {t(property.category as any)} <span className="text-white/30 font-sans font-light">/</span> {property.city}
+          <h3 className="text-2xl font-serif text-foreground group-hover:text-warm-brown transition-colors duration-300">
+            {t(property.category as any)} <span className="text-muted-foreground font-sans font-light">/</span> {property.city}
           </h3>
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/5 pt-6">
-          <p className="text-xl font-light tracking-widest text-white">{formatPrice(property.price)}</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 border-t border-border pt-6">
+          <p className="whitespace-nowrap text-base sm:text-xl font-light tracking-wide text-foreground">
+            <span className="block">{formatPrice(property.price).amount}</span>
+            <span className="block text-[9px] sm:text-[10px] tracking-[0.25em] text-muted-foreground">{formatPrice(property.price).currency}</span>
+          </p>
 
           {/* Minimal Features */}
-          <div className="flex items-center gap-6 text-white/40 text-[10px] tracking-widest uppercase">
+          <div className="flex items-center gap-4 sm:gap-6 text-muted-foreground text-[10px] tracking-widest uppercase shrink-0">
             {property.bedrooms > 0 && (
               <div className="flex items-center gap-2">
                 <Bed className="w-3 h-3" />
@@ -94,7 +102,7 @@ export function PropertyCard({ property, onNavigate }: PropertyCardProps) {
               </div>
             )}
             {property.surface > 0 && (
-              <div className="flex items-center gap-2 border-l border-white/10 pl-6">
+                <div className="flex items-center gap-2 border-l border-border pl-6">
                 <Maximize className="w-3 h-3" />
                 <span>{property.surface} M²</span>
               </div>

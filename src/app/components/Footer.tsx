@@ -11,7 +11,7 @@ export function Footer({ onNavigate }: FooterProps) {
   const logoSrc = '/uploads/logoooooooooo.png';
 
   return (
-    <footer className="bg-black border-t border-white/5 text-white/40 selection:bg-warm-brown">
+    <footer className="bg-card border-t border-border text-muted-foreground selection:bg-warm-brown">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-32">
           {/* Brand/About */}
@@ -21,7 +21,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 <img src={logoSrc} alt="Dawn Estate logo" className="w-full h-full object-cover" />
               </div>
               <div>
-                <h3 className="text-sm font-serif tracking-widest text-white m-0 leading-none">DAWN ESTATE</h3>
+                <h3 className="text-sm font-serif tracking-widest text-foreground m-0 leading-none">DAWN ESTATE</h3>
                 <p className="text-[8px] uppercase tracking-[0.3em] text-warm-brown mt-1">Marrakech</p>
               </div>
             </div>
@@ -32,7 +32,7 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Curated Selection */}
           <div className="space-y-8">
-            <h4 className="text-[10px] uppercase tracking-[0.3em] text-white font-bold">{t('quickLinks')}</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.3em] text-foreground font-bold">{t('quickLinks')}</h4>
             <ul className="space-y-4">
               {[
                 { key: 'home', label: t('home') },
@@ -54,15 +54,15 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Contact Details */}
           <div className="space-y-8">
-            <h4 className="text-[10px] uppercase tracking-[0.3em] text-white font-bold">{t('contact')}</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.3em] text-foreground font-bold">{t('contact')}</h4>
             <ul className="space-y-6">
               <li className="flex items-start space-x-4 group">
                 <Mail className="w-3 h-3 text-warm-brown mt-0.5 group-hover:scale-110 transition-transform" />
-                <span className="text-[10px] uppercase tracking-widest font-light group-hover:text-white transition-colors cursor-pointer">contact@dawnestate.com</span>
+                <span className="text-[10px] uppercase tracking-widest font-light group-hover:text-foreground transition-colors cursor-pointer">contact@dawnestate.com</span>
               </li>
               <li className="flex items-start space-x-4 group">
                 <Phone className="w-3 h-3 text-warm-brown mt-0.5 group-hover:scale-110 transition-transform" />
-                <a href="https://wa.me/212762829992" target="_blank" rel="noreferrer" className="text-[10px] uppercase tracking-widest font-light hover:text-white transition-colors">+212 762-829992</a>
+                <a href="https://wa.me/212762829992" target="_blank" rel="noreferrer" className="text-[10px] uppercase tracking-widest font-light hover:text-foreground transition-colors">+212 762-829992</a>
               </li>
               <li className="flex items-start space-x-4 group">
                 <MapPin className="w-3 h-3 text-warm-brown mt-0.5 group-hover:scale-110 transition-transform" />
@@ -73,7 +73,7 @@ export function Footer({ onNavigate }: FooterProps) {
 
           {/* Experience */}
           <div className="space-y-8">
-            <h4 className="text-[10px] uppercase tracking-[0.3em] text-white font-bold">{t('followUs')}</h4>
+            <h4 className="text-[10px] uppercase tracking-[0.3em] text-foreground font-bold">{t('followUs')}</h4>
             <div className="flex space-x-6">
               {[
                 { icon: Facebook, label: 'Facebook' },
@@ -83,26 +83,26 @@ export function Footer({ onNavigate }: FooterProps) {
               ].map((social) => (
                 <button
                   key={social.label}
-                  className="text-white/20 hover:text-warm-brown transition-colors duration-700"
+                  className="text-muted-foreground hover:text-warm-brown transition-colors duration-700"
                 >
                   <social.icon className="w-4 h-4" />
                 </button>
               ))}
             </div>
-            <div className="pt-8 border-t border-white/5">
+            <div className="pt-8 border-t border-border">
               <p className="text-[8px] uppercase tracking-[0.4em] font-medium text-warm-brown">{t('footerSlogan')}</p>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="mt-24 pt-12 border-t border-border flex flex-col md:flex-row justify-between items-center gap-8">
           <p className="text-[8px] uppercase tracking-[0.5em] font-light">
             © {new Date().getFullYear()} Dawn Estate. {t('allRightsReserved')}.
           </p>
           <div className="flex space-x-12">
-            <button className="text-[8px] uppercase tracking-[0.3em] hover:text-white transition-colors">{t('privacyPolicy')}</button>
-            <button className="text-[8px] uppercase tracking-[0.3em] hover:text-white transition-colors">{t('termsOfService')}</button>
+            <button className="text-[8px] uppercase tracking-[0.3em] hover:text-foreground transition-colors">{t('privacyPolicy')}</button>
+            <button className="text-[8px] uppercase tracking-[0.3em] hover:text-foreground transition-colors">{t('termsOfService')}</button>
           </div>
         </div>
       </div>

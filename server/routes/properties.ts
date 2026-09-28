@@ -92,6 +92,20 @@ propertiesRouter.get('/', async (req, res) => {
     }
 });
 
+propertiesRouter.get('/mine', authenticateToken, async (req, res) => {
+    try {
+        if (!hasAuthUser(req)) return res.status(401).json({ error: 'Unauthorized' });
+        const properties = await prisma.property.findMany({
+            where: { createdBy: req.user.id },
+            include: { category: true, transactionType: true, images: true },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json({ properties: properties.map(mapProperty) });
+    } catch (error) {
+        sendServerError(res, error);
+    }
+});
+
 propertiesRouter.get('/:id', async (req, res) => {
     try {
         const id = String(req.params.id);
@@ -194,6 +208,74 @@ propertiesRouter.post('/', authenticateToken, async (req, res) => {
 
         res.json({ success: true, propertyId: id });
     } catch (error) {
+        sendServerError(res, error);
+    }
+});
+
+propertiesRouter.put('/:id', authenticateToken, async (req, res) => {
+    try {
+        if (!hasAuthUser(req)) return res.status(401).json({ error: 'Unauthorized' });
+        const existingProperty = await prisma.property.findUnique({ where: { id: String(req.params.id) }, select: { createdBy: true } });
+        if (!existingProperty) return res.status(404).json({ error: 'Property not found' });
+        if (req.user.role !== 'admin' && existingProperty.createdBy !== req.user.id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        const id = String(req.params.id);
+        const { category, prestation, city, surface, address, bedrooms, bathrooms, pool, price, images, title, description } = req.body;
+        const categoryName = toCategory(category);
+        const prestationName = toPrestation(prestation);
+        if (!categoryName || !prestationName) {
+            return res.status(400).json({ error: 'Invalid property category or type' });
+        }
+
+        const property = await prisma.property.findUnique({ where: { id } });
+        if (!property) return res.status(404).json({ error: 'Property not found' });
+
+        const categoryRecord = await prisma.category.upsert({
+            where: { name: categoryName },
+            update: {},
+            create: { name: categoryName }
+        });
+        const transactionTypeRecord = await prisma.transactionType.upsert({
+            where: { name: prestationName },
+            update: {},
+            create: { name: prestationName }
+        });
+
+        await prisma.property.update({
+            where: { id },
+            data: {
+                title: title || property.title,
+                description: description || property.description,
+                price: Number(price) || 0,
+                categoryId: categoryRecord.id,
+                transactionTypeId: transactionTypeRecord.id,
+                address: address || city || 'Unknown address',
+                city: city || 'Marrakech',
+                specificAttributes: JSON.stringify({
+                    surface: Number(surface) || 0,
+                    bedrooms: Number(bedrooms) || 0,
+                    bathrooms: Number(bathrooms) || 0,
+                    pool: toBoolean(pool)
+                })
+            }
+        });
+
+        if (Array.isArray(images)) {
+            await prisma.propertyImage.deleteMany({ where: { propertyId: id } });
+            if (images.length > 0) {
+                await prisma.propertyImage.createMany({
+                    data: images.map((imageUrl: string, index: number) => ({ propertyId: id, imageUrl, isMain: index === 0 }))
+                });
+            }
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            return res.status(404).json({ error: 'Not found' });
+        }
         sendServerError(res, error);
     }
 });

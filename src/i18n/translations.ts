@@ -99,6 +99,16 @@ export const translations = {
     submit: "Submit",
     submitting: "Submitting...",
     propertySubmitted: "Property submitted successfully! It will be reviewed by our team.",
+    editProperty: "Edit Property",
+    saveChanges: "Save Changes",
+    propertyUpdated: "Property updated successfully.",
+    agentWorkspace: "Agent Workspace",
+    myAccount: "My Account",
+    myListings: "My Listings",
+    myProperties: "My Properties",
+    myEstimations: "My Estimations",
+    noEstimations: "No estimation requests found",
+    open: "Pending Review",
     
     // Estimation
     estimateTitle: "Property Estimation",

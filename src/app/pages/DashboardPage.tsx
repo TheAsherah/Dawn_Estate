@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { Users, Building2, Clock, CheckCircle, Trash2, Eye } from 'lucide-react';
+import { Users, Building2, Clock, CheckCircle, Trash2, Eye, Pencil } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/app/components/ui/button';
@@ -24,6 +24,7 @@ interface DashboardPageProps {
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const { t, language } = useLanguage();
   const { user, isAdmin } = useAuth();
+  const isAgent = user?.role === 'agent';
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
   const [properties, setProperties] = useState([]);
@@ -31,20 +32,27 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const [estimations, setEstimations] = useState([]);
 
   useEffect(() => {
-    if (!isAdmin) {
+    if (!user) {
       onNavigate('home');
       return;
     }
     fetchData();
-  }, [isAdmin]);
+  }, [user, isAdmin]);
 
   async function fetchData() {
     try {
+      if (!isAdmin) {
+        const [propertiesData, estimationsData] = await Promise.all([
+          apiCall('/properties/mine'),
+          apiCall('/estimations/mine'),
+        ]);
+        setProperties(propertiesData.properties || []);
+        setEstimations(estimationsData.estimations || []);
+        return;
+      }
+
       const [statsData, propertiesData, usersData, estimationsData] = await Promise.all([
-        apiCall('/admin/stats'),
-        apiCall('/properties?status=all'),
-        apiCall('/admin/users'),
-        apiCall('/estimations'),
+        apiCall('/admin/stats'), apiCall('/properties?status=all'), apiCall('/admin/users'), apiCall('/estimations'),
       ]);
 
       setStats(statsData.stats);
@@ -140,7 +148,58 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   };
 
   if (!isAdmin) {
-    return null;
+    return (
+      <div className="min-h-screen bg-background text-foreground selection:bg-warm-brown pb-32">
+        <div className="pt-40 pb-20 border-b border-border">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <span className="text-warm-brown text-[10px] tracking-[0.5em] uppercase font-medium">{isAgent ? t('agentWorkspace') : t('myAccount')}</span>
+            <h1 className="text-5xl md:text-6xl font-serif mt-4">{t('dashboard')}</h1>
+            <p className="text-muted-foreground text-sm tracking-[0.2em] uppercase font-light mt-4">{user?.firstName} {user?.lastName}</p>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 space-y-16">
+          <section className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-serif">{isAgent ? t('myListings') : t('myProperties')}</h2>
+              {isAgent && <Button onClick={() => onNavigate('add-property')} className="rounded-none bg-warm-brown text-white">{t('addProperty')}</Button>}
+            </div>
+            <div className="bg-card border border-border overflow-x-auto">
+              <Table>
+                <TableHeader><TableRow><TableHead>{t('category')}</TableHead><TableHead>{t('city')}</TableHead><TableHead>{t('priceLabel')}</TableHead><TableHead>{t('status')}</TableHead><TableHead>{t('actions')}</TableHead></TableRow></TableHeader>
+                <TableBody>
+                  {properties.map((property: any) => (
+                    <TableRow key={property.id}>
+                      <TableCell className="font-serif text-lg">{t(property.category)}</TableCell>
+                      <TableCell>{property.city}</TableCell>
+                      <TableCell className="whitespace-nowrap">{formatPrice(property.price)}</TableCell>
+                      <TableCell><Badge className="rounded-none uppercase">{t(property.status)}</Badge></TableCell>
+                      <TableCell className="flex gap-4">
+                        <button onClick={() => onNavigate('property-detail', property.id)} title={t('viewDetails')}><Eye className="w-4 h-4" /></button>
+                        {isAgent && <button onClick={() => onNavigate('add-property', property.id)} title={t('editProperty')}><Pencil className="w-4 h-4 text-warm-brown" /></button>}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {properties.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-12 text-muted-foreground">{t('noProperties')}</TableCell></TableRow>}
+                </TableBody>
+              </Table>
+            </div>
+          </section>
+
+          {!isAgent && <section className="space-y-6">
+            <h2 className="text-2xl font-serif">{t('myEstimations')}</h2>
+            <div className="bg-card border border-border">
+              <Table>
+                <TableHeader><TableRow><TableHead>{t('name')}</TableHead><TableHead>{t('city')}</TableHead><TableHead>{t('date')}</TableHead><TableHead>{t('status')}</TableHead></TableRow></TableHeader>
+                <TableBody>
+                  {estimations.map((est: any) => <TableRow key={est.id}><TableCell className="font-serif text-lg">{est.title}</TableCell><TableCell>{est.approximateLocation}</TableCell><TableCell>{formatDate(est.createdAt)}</TableCell><TableCell><Badge className="rounded-none uppercase">{t(est.status) || est.status}</Badge></TableCell></TableRow>)}
+                  {estimations.length === 0 && <TableRow><TableCell colSpan={4} className="text-center py-12 text-muted-foreground">{t('noEstimations')}</TableCell></TableRow>}
+                </TableBody>
+              </Table>
+            </div>
+          </section>}
+        </div>
+      </div>
+    );
   }
 
   if (loading) {
@@ -155,9 +214,9 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-warm-brown pb-32">
+    <div className="min-h-screen bg-background text-foreground selection:bg-warm-brown pb-32">
       {/* Refined Header */}
-      <div className="pt-40 pb-20 border-b border-white/5">
+      <div className="pt-40 pb-20 border-b border-border">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -170,7 +229,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             <h1 className="text-5xl md:text-6xl font-serif">
               {t('adminDashboard')}
             </h1>
-            <p className="text-white/40 text-sm tracking-[0.2em] uppercase font-light">
+            <p className="text-muted-foreground text-sm tracking-[0.2em] uppercase font-light">
               Welcome back, {user?.firstName}.
             </p>
           </motion.div>
@@ -191,14 +250,14 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-[#0a0a0a] border border-white/5 p-8 space-y-4"
+              className="bg-card border border-border p-8 space-y-4"
             >
               <div className="flex items-center justify-between">
                 <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                <span className="text-[10px] tracking-widest text-white/20 uppercase font-bold">DE/0{i + 1}</span>
+                <span className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold">DE/0{i + 1}</span>
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">{t(stat.label as any)}</p>
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">{t(stat.label as any)}</p>
                 <p className="text-4xl font-light tracking-tighter">{stat.value || 0}</p>
               </div>
             </motion.div>
@@ -212,7 +271,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           transition={{ delay: 0.4 }}
         >
           <Tabs defaultValue="properties" className="space-y-12">
-            <TabsList className="bg-white/5 border border-white/10 p-1 w-full md:w-auto h-auto rounded-none">
+            <TabsList className="bg-muted border border-border p-1 w-full md:w-auto h-auto rounded-none">
               <TabsTrigger value="properties" className="data-[state=active]:bg-warm-brown data-[state=active]:text-white rounded-none py-3 px-8 text-[10px] uppercase tracking-widest">{t('manageProperties')}</TabsTrigger>
               <TabsTrigger value="users" className="data-[state=active]:bg-warm-brown data-[state=active]:text-white rounded-none py-3 px-8 text-[10px] uppercase tracking-widest">{t('manageUsers')}</TabsTrigger>
               <TabsTrigger value="estimations" className="data-[state=active]:bg-warm-brown data-[state=active]:text-white rounded-none py-3 px-8 text-[10px] uppercase tracking-widest">{t('manageEstimations')}</TabsTrigger>
@@ -220,23 +279,23 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
             {/* Properties Tab */}
             <TabsContent value="properties" className="space-y-8 animate-in fade-in duration-700">
-              <div className="bg-[#0a0a0a] border border-white/5">
+              <div className="bg-card border border-border overflow-x-auto">
                 <Table>
-                  <TableHeader className="border-b border-white/5">
+                  <TableHeader className="border-b border-border">
                     <TableRow className="border-none hover:bg-transparent">
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('category')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('city')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('priceLabel')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('status')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('actions')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('category')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('city')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('priceLabel')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('status')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {properties.map((prop: any) => (
-                      <TableRow key={prop.id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
+                      <TableRow key={prop.id} className="border-border hover:bg-muted/60 transition-colors">
                         <TableCell className="font-serif text-lg py-6">{t(prop.category)}</TableCell>
-                        <TableCell className="text-[10px] tracking-widest uppercase text-white/60">{prop.city}</TableCell>
-                        <TableCell className="font-light tracking-widest">{formatPrice(prop.price)}</TableCell>
+                        <TableCell className="text-[10px] tracking-widest uppercase text-muted-foreground">{prop.city}</TableCell>
+                        <TableCell className="font-light tracking-wide whitespace-nowrap">{formatPrice(prop.price)}</TableCell>
                         <TableCell>
                           <Badge className={`rounded-none text-[8px] tracking-[0.2em] uppercase px-3 py-1 border-none ${prop.status === 'approved' ? 'bg-green-500/10 text-green-500' :
                             prop.status === 'pending' ? 'bg-warm-brown/10 text-warm-brown' :
@@ -247,8 +306,11 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-4">
-                            <button onClick={() => onNavigate('property-detail', prop.id)} className="text-white/40 hover:text-white transition-colors">
+                            <button onClick={() => onNavigate('property-detail', prop.id)} className="text-muted-foreground hover:text-foreground transition-colors">
                               <Eye className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => onNavigate('add-property', prop.id)} className="text-muted-foreground hover:text-warm-brown transition-colors" title="Edit property">
+                              <Pencil className="w-4 h-4" />
                             </button>
                             {prop.status === 'pending' && (
                               <div className="flex gap-2">
@@ -256,7 +318,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                                 <button onClick={() => handlePropertyStatus(prop.id, 'rejected')} className="bg-red-500/20 text-red-500 px-4 py-1 text-[8px] tracking-widest uppercase hover:bg-red-500/40 transition-colors">{t('reject')}</button>
                               </div>
                             )}
-                            <button onClick={() => handleDeleteProperty(prop.id)} className="text-white/20 hover:text-red-500 transition-colors">
+                            <button onClick={() => handleDeleteProperty(prop.id)} className="text-muted-foreground hover:text-red-500 transition-colors">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -270,23 +332,23 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
             {/* Users Tab */}
             <TabsContent value="users" className="space-y-8 animate-in fade-in duration-700">
-              <div className="bg-[#0a0a0a] border border-white/5">
+              <div className="bg-card border border-border overflow-x-auto">
                 <Table>
-                  <TableHeader className="border-b border-white/5">
+                  <TableHeader className="border-b border-border">
                     <TableRow className="border-none hover:bg-transparent">
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('name')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('email')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('role')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('actions')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('name')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('email')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('role')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {users.map((u: any) => (
-                      <TableRow key={u.id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
+                      <TableRow key={u.id} className="border-border hover:bg-muted/60 transition-colors">
                         <TableCell className="font-serif text-lg py-6">{u.firstName} {u.lastName}</TableCell>
-                        <TableCell className="text-white/60 font-light">{u.email}</TableCell>
+                        <TableCell className="text-muted-foreground font-light">{u.email}</TableCell>
                         <TableCell>
-                          <Badge className={`rounded-none text-[8px] tracking-[0.2em] uppercase px-3 py-1 border-none ${u.role === 'admin' ? 'bg-blue-500/10 text-blue-500' : 'bg-white/10 text-white/40'
+                          <Badge className={`rounded-none text-[8px] tracking-[0.2em] uppercase px-3 py-1 border-none ${u.role === 'admin' ? 'bg-blue-500/10 text-blue-500' : 'bg-muted text-muted-foreground'
                             }`}>
                             {t(u.role)}
                           </Badge>
@@ -295,7 +357,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                           {u.id !== user?.id && (
                             <button
                               onClick={() => handleUserRole(u.id, u.role === 'admin' ? 'user' : 'admin')}
-                              className="text-[10px] tracking-widest uppercase text-warm-brown hover:text-white transition-colors"
+                              className="text-[10px] tracking-widest uppercase text-warm-brown hover:text-foreground transition-colors"
                             >
                               {t('changeRole')}
                             </button>
@@ -310,26 +372,26 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
             {/* Estimations Tab */}
             <TabsContent value="estimations" className="space-y-8 animate-in fade-in duration-700">
-              <div className="bg-[#0a0a0a] border border-white/5">
+              <div className="bg-card border border-border">
                 <Table>
-                  <TableHeader className="border-b border-white/5">
+                  <TableHeader className="border-b border-border">
                     <TableRow className="border-none hover:bg-transparent">
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('name')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('propertyType')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('city')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('date')}</TableHead>
-                      <TableHead className="text-[10px] uppercase tracking-widest text-white/40 h-16">{t('actions')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('name')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('propertyType')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('city')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('date')}</TableHead>
+                      <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground h-16">{t('actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {estimations.map((est: any) => (
-                      <TableRow key={est.id} className="border-white/5 hover:bg-white/[0.02] transition-colors">
+                      <TableRow key={est.id} className="border-border hover:bg-muted/60 transition-colors">
                         <TableCell className="font-serif text-lg py-6">{est.name}</TableCell>
                         <TableCell className="text-[10px] tracking-widest uppercase text-warm-brown">{t(est.propertyType)}</TableCell>
-                        <TableCell className="text-white/60 font-light">{est.city}</TableCell>
-                        <TableCell className="text-white/40 text-[10px]">{formatDate(est.createdAt)}</TableCell>
+                        <TableCell className="text-muted-foreground font-light">{est.city}</TableCell>
+                        <TableCell className="text-muted-foreground text-[10px]">{formatDate(est.createdAt)}</TableCell>
                         <TableCell>
-                          <button onClick={() => handleDeleteEstimation(est.id)} className="text-white/20 hover:text-red-500 transition-colors">
+                          <button onClick={() => handleDeleteEstimation(est.id)} className="text-muted-foreground hover:text-red-500 transition-colors">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </TableCell>
