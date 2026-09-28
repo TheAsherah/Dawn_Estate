@@ -38,7 +38,7 @@ function AppContent() {
       case 'property-detail':
         return <PropertyDetailPage onNavigate={handleNavigate} propertyId={selectedPropertyId!} />;
       case 'add-property':
-        return <AddPropertyPage onNavigate={handleNavigate} />;
+        return <AddPropertyPage onNavigate={handleNavigate} propertyId={selectedPropertyId} />;
       case 'help':
         return <HelpPage onNavigate={handleNavigate} />;
       case 'contact':
@@ -55,7 +55,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-white" dir={dir}>
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300" dir={dir}>
       <Navbar
         onNavigate={handleNavigate}
         currentPage={currentPage}

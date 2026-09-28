@@ -48,11 +48,16 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
   }
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(language === 'ar' ? 'ar-MA' : language === 'fr' ? 'fr-FR' : 'en-US', {
+    const parts = new Intl.NumberFormat(language === 'ar' ? 'ar-MA' : language === 'fr' ? 'fr-FR' : 'en-US', {
       style: 'currency',
       currency: 'MAD',
       minimumFractionDigits: 0,
-    }).format(price);
+    }).formatToParts(price);
+
+    return {
+      amount: parts.filter((part) => part.type !== 'currency' && part.type !== 'literal').map((part) => part.value).join('').trim(),
+      currency: parts.find((part) => part.type === 'currency')?.value || 'MAD',
+    };
   };
 
   const openWhatsApp = (message: string) => {
@@ -61,10 +66,10 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black pt-20 flex items-center justify-center">
+      <div className="min-h-screen bg-background pt-20 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin h-12 w-12 border-b-2 border-warm-brown mx-auto mb-4"></div>
-          <p className="text-white/40 uppercase tracking-widest text-xs">{t('loading')}</p>
+          <p className="text-muted-foreground uppercase tracking-widest text-xs">{t('loading')}</p>
         </div>
       </div>
     );
@@ -72,12 +77,12 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
 
   if (!property) {
     return (
-      <div className="min-h-screen bg-black pt-20 flex items-center justify-center">
+      <div className="min-h-screen bg-background pt-20 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-white/60 mb-8 tracking-widest uppercase">{t('error')}</p>
+          <p className="text-muted-foreground mb-8 tracking-widest uppercase">{t('error')}</p>
           <button
             onClick={() => onNavigate('properties')}
-            className="border border-warm-brown text-white px-10 py-4 text-[10px] tracking-[0.4em] uppercase"
+            className="border border-warm-brown text-foreground px-10 py-4 text-[10px] tracking-[0.4em] uppercase"
           >
             {t('backToProperties')}
           </button>
@@ -87,11 +92,11 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-warm-brown pb-32">
+    <div className="min-h-screen bg-background text-foreground selection:bg-warm-brown pb-32">
       {/* Back Button Floating */}
       <button
         onClick={() => onNavigate('properties')}
-        className="fixed top-28 left-8 z-40 w-12 h-12 bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-warm-brown hover:border-warm-brown transition-all duration-300"
+        className="fixed top-28 left-8 z-40 w-12 h-12 bg-background/70 backdrop-blur-md border border-border flex items-center justify-center text-foreground hover:bg-warm-brown hover:border-warm-brown transition-all duration-300"
       >
         <ArrowLeft className="w-5 h-5" />
       </button>
@@ -121,9 +126,9 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
                 <Badge className="bg-warm-brown text-white text-[10px] tracking-[0.4em] uppercase rounded-none px-6 py-2 border-none">
                   {t(property.prestation as any)}
                 </Badge>
-                <span className="text-white/40 text-[10px] tracking-[0.4em] uppercase font-medium">/{t(property.category as any)}</span>
+                <span className="text-muted-foreground text-[10px] tracking-[0.4em] uppercase font-medium">/{t(property.category as any)}</span>
               </div>
-              <h1 className="text-6xl md:text-8xl font-serif text-white max-w-4xl leading-tight">
+              <h1 className="text-6xl md:text-8xl font-serif text-foreground max-w-4xl leading-tight">
                 {property.address || property.category}
               </h1>
               <div className="flex items-center text-warm-brown text-sm tracking-[0.3em] font-medium uppercase">
@@ -142,7 +147,7 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
           <div className="lg:col-span-8 space-y-32">
 
             {/* Features Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-12 border-y border-white/5 py-12">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-12 border-y border-border py-12">
               {[
                 { icon: Maximize, label: t('surfaceStat'), value: `${property.surface} M²` },
                 { icon: Bed, label: t('bedroomsStat'), value: property.bedrooms },
@@ -152,7 +157,7 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
                 <div key={i} className="space-y-3">
                   <div className="flex items-center gap-3 text-warm-brown">
                     <item.icon className="w-4 h-4" />
-                    <span className="text-[10px] tracking-[0.3em] uppercase font-medium text-white/40">{item.label}</span>
+                    <span className="text-[10px] tracking-[0.3em] uppercase font-medium text-muted-foreground">{item.label}</span>
                   </div>
                   <p className="text-2xl font-light tracking-widest">{item.value}</p>
                 </div>
@@ -161,13 +166,13 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
 
             {/* Gallery Grid */}
             <div className="space-y-12">
-              <h3 className="text-3xl font-serif text-white/50">{t('gallery')}</h3>
+              <h3 className="text-3xl font-serif text-muted-foreground">{t('gallery')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {property.images.slice(0, 6).map((img: string, i: number) => (
                   <motion.div
                     key={i}
                     whileHover={{ scale: 1.02 }}
-                    className="aspect-square bg-white/5 overflow-hidden border border-white/5"
+                    className="aspect-square bg-muted overflow-hidden border border-border"
                   >
                     <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700" />
                   </motion.div>
@@ -178,7 +183,7 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
             {/* Description */}
             <div className="space-y-12 max-w-3xl">
               <h2 className="text-4xl font-serif leading-tight">{t('masterpieceTitle')}</h2>
-              <div className="space-y-8 text-white/60 text-lg font-light leading-relaxed">
+              <div className="space-y-8 text-muted-foreground text-lg font-light leading-relaxed">
                 <p>{t('masterpieceParagraphOne')}</p>
                 <p>{t('masterpieceParagraphTwo')}</p>
               </div>
@@ -187,20 +192,23 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
 
           {/* Sidebar / Contact */}
           <div className="lg:col-span-4">
-            <div className="sticky top-32 space-y-12 bg-[#0a0a0a] border border-white/5 p-12">
+            <div className="sticky top-32 space-y-12 bg-card border border-border p-12">
               <div className="space-y-4">
                 <span className="text-warm-brown text-[10px] tracking-[0.4em] uppercase font-medium">{t('inquiryPrice')}</span>
-                <p className="text-5xl font-light tracking-widest">{formatPrice(property.price)}</p>
+                <p className="whitespace-nowrap text-2xl sm:text-5xl font-light tracking-wide">
+                  <span className="block">{formatPrice(property.price).amount}</span>
+                  <span className="block text-xs sm:text-sm tracking-[0.3em] text-muted-foreground">{formatPrice(property.price).currency}</span>
+                </p>
               </div>
 
-              <div className="pt-12 border-t border-white/5 space-y-8">
+              <div className="pt-12 border-t border-border space-y-8">
                 <div className="flex items-center gap-6">
-                  <div className="w-16 h-16 bg-white/5 flex items-center justify-center border border-white/10">
+                  <div className="w-16 h-16 bg-muted flex items-center justify-center border border-border">
                     <User className="w-8 h-8 text-warm-brown" />
                   </div>
                   <div>
                     <p className="text-lg font-serif">{property.first_name} {property.last_name}</p>
-                    <p className="text-[10px] tracking-widest text-white/40 uppercase">{t('expertAdvisor')}</p>
+                    <p className="text-[10px] tracking-widest text-muted-foreground uppercase">{t('expertAdvisor')}</p>
                   </div>
                 </div>
 
@@ -214,7 +222,7 @@ export function PropertyDetailPage({ propertyId, onNavigate }: PropertyDetailPag
                   </button>
                   <button
                     onClick={() => openWhatsApp(`${t('whatsAppViewingMessage')}: ${property.address || property.category} in Marrakech`)}
-                    className="w-full border border-white/10 text-white py-6 text-[10px] tracking-[0.4em] uppercase font-medium hover:bg-white/5 transition-all duration-500"
+                    className="w-full border border-border text-foreground py-6 text-[10px] tracking-[0.4em] uppercase font-medium hover:bg-muted transition-all duration-500"
                   >
                     {t('requestViewing')}
                   </button>

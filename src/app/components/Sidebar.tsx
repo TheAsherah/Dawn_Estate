@@ -49,7 +49,7 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 40, stiffness: 400 }}
-            className="fixed top-0 right-0 bottom-0 w-80 lg:w-96 bg-black border-l border-white/5 shadow-2xl z-[101] overflow-y-auto flex flex-col"
+            className="fixed top-0 right-0 bottom-0 w-80 lg:w-96 bg-card border-l border-border shadow-2xl z-[101] overflow-y-auto flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-10">
@@ -58,30 +58,30 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
                   <img src={logoSrc} alt="Dawn Estate logo" className="w-full h-full object-cover" />
                 </div>
                 <div className="space-y-1">
-                  <h2 className="text-xl font-serif tracking-[0.2em] text-white m-0">DAWN ESTATE</h2>
+                  <h2 className="text-xl font-serif tracking-[0.2em] text-foreground m-0">DAWN ESTATE</h2>
                   <p className="text-[10px] uppercase tracking-[0.3em] text-warm-brown">{t('exclusiveProperties')}</p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="p-3 border border-white/5 hover:border-warm-brown transition-colors group"
+                className="p-3 border border-border hover:border-warm-brown transition-colors group"
               >
-                <X className="w-5 h-5 text-white/40 group-hover:text-warm-brown transition-colors" />
+                <X className="w-5 h-5 text-muted-foreground group-hover:text-warm-brown transition-colors" />
               </button>
             </div>
 
             {/* User Info - Premium Card */}
             {user && (
-              <div className="px-10 py-10 bg-white/5 border-y border-white/5">
+              <div className="px-10 py-10 bg-muted border-y border-border">
                 <div className="flex items-center space-x-6">
                   <div className="w-14 h-14 border border-warm-brown flex items-center justify-center">
                     <User className="w-6 h-6 text-warm-brown" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-white">
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-foreground">
                       {user.firstName} {user.lastName}
                     </p>
-                    <p className="text-[10px] uppercase tracking-[0.1em] text-white/40 font-light">{user.email}</p>
+                    <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground font-light">{user.email}</p>
                   </div>
                 </div>
               </div>
@@ -90,7 +90,7 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
             {/* Navigation - Minimalist List */}
             <div className="flex-1 p-10 space-y-12">
               <nav className="space-y-6">
-                <p className="text-[10px] uppercase tracking-[0.5em] text-white/20 font-bold mb-8">{t('navigation')}</p>
+                <p className="text-[10px] uppercase tracking-[0.5em] text-muted-foreground font-bold mb-8">{t('navigation')}</p>
                 {menuItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = currentPage === item.key;
@@ -99,11 +99,11 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
                     <button
                       key={item.key}
                       onClick={() => handleNavigate(item.key)}
-                      className={`w-full flex items-center justify-between group transition-all duration-500 py-2 border-b border-transparent hover:border-warm-brown ${isActive ? 'text-warm-brown' : 'text-white/60 hover:text-white'
+                      className={`w-full flex items-center justify-between group transition-all duration-500 py-2 border-b border-transparent hover:border-warm-brown ${isActive ? 'text-warm-brown' : 'text-muted-foreground hover:text-foreground'
                         }`}
                     >
                       <div className="flex items-center space-x-4">
-                        <Icon className={`w-4 h-4 transition-colors duration-500 ${isActive ? 'text-warm-brown' : 'text-white/20 group-hover:text-warm-brown'}`} />
+                        <Icon className={`w-4 h-4 transition-colors duration-500 ${isActive ? 'text-warm-brown' : 'text-muted-foreground group-hover:text-warm-brown'}`} />
                         <span className="text-[10px] uppercase tracking-[0.3em] font-medium">{item.label}</span>
                       </div>
                       <div className={`w-1 h-1 bg-warm-brown transition-all duration-500 ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100'}`} />
@@ -112,14 +112,14 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
                 })}
 
                 {/* Admin Dashboard */}
-                {isAdmin && (
+                {user && (
                   <button
                     onClick={() => handleNavigate('dashboard')}
-                    className={`w-full flex items-center justify-between group transition-all duration-500 py-2 border-b border-transparent hover:border-warm-brown mt-12 ${currentPage === 'dashboard' ? 'text-warm-brown' : 'text-white/60 hover:text-white'
+                    className={`w-full flex items-center justify-between group transition-all duration-500 py-2 border-b border-transparent hover:border-warm-brown mt-12 ${currentPage === 'dashboard' ? 'text-warm-brown' : 'text-muted-foreground hover:text-foreground'
                       }`}
                   >
                     <div className="flex items-center space-x-4">
-                      <LayoutDashboard className={`w-4 h-4 transition-colors duration-500 ${currentPage === 'dashboard' ? 'text-warm-brown' : 'text-white/20 group-hover:text-warm-brown'}`} />
+                      <LayoutDashboard className={`w-4 h-4 transition-colors duration-500 ${currentPage === 'dashboard' ? 'text-warm-brown' : 'text-muted-foreground group-hover:text-warm-brown'}`} />
                       <span className="text-[10px] uppercase tracking-[0.3em] font-bold">{t('dashboard')}</span>
                     </div>
                   </button>
@@ -128,7 +128,7 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
 
               {/* Categories - Extra Refined */}
               <div className="space-y-6">
-                <p className="text-[10px] uppercase tracking-[0.5em] text-white/20 font-bold mb-8">{t('categories')}</p>
+                <p className="text-[10px] uppercase tracking-[0.5em] text-muted-foreground font-bold mb-8">{t('categories')}</p>
                 <div className="grid grid-cols-1 gap-4">
                   {[
                     { key: 'villa', label: t('villa') },
@@ -141,7 +141,7 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
                     <button
                       key={cat.key}
                       onClick={() => handleNavigate('properties')}
-                      className="text-left text-[10px] uppercase tracking-[0.2em] text-white/40 hover:text-warm-brown transition-colors duration-500"
+                      className="text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-warm-brown transition-colors duration-500"
                     >
                       {cat.label}
                     </button>
@@ -151,12 +151,12 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
             </div>
 
             {/* Auth Actions - Minimalist Footer */}
-            <div className="p-10 border-t border-white/5 space-y-4">
+            <div className="p-10 border-t border-border space-y-4">
               {!user ? (
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => handleNavigate('login')}
-                    className="py-4 border border-white/10 text-[10px] uppercase tracking-[0.3em] text-white hover:bg-white hover:text-black transition-all duration-700"
+                    className="py-4 border border-border text-[10px] uppercase tracking-[0.3em] text-foreground hover:bg-muted transition-all duration-700"
                   >
                     {t('login')}
                   </button>
@@ -173,7 +173,7 @@ export function Sidebar({ isOpen, onClose, onNavigate, currentPage }: SidebarPro
                     logout();
                     onClose();
                   }}
-                  className="w-full py-4 border border-white/10 text-[10px] uppercase tracking-[0.3em] text-white/40 hover:text-red-500 hover:border-red-500 transition-all duration-700 flex items-center justify-center space-x-3"
+                  className="w-full py-4 border border-border text-[10px] uppercase tracking-[0.3em] text-muted-foreground hover:text-red-500 hover:border-red-500 transition-all duration-700 flex items-center justify-center space-x-3"
                 >
                   <LogIn className="w-3 h-3" />
                   <span>{t('logout')}</span>

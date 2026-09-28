@@ -40,3 +40,14 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
         next();
     });
 };
+
+export const optionalAuthenticateToken = (req: Request, _res: Response, next: NextFunction) => {
+    const token = getAuthToken(req);
+    const secret = process.env.JWT_SECRET;
+    if (!token || !secret) return next();
+
+    jwt.verify(token, secret, (err, user) => {
+        if (!err && user) req.user = user as AuthPayload;
+        next();
+    });
+};

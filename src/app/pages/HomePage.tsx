@@ -4,6 +4,13 @@ import { ArrowRight, Award, Home, Users } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { Button } from '@/app/components/ui/button';
 import { PropertyCard } from '@/app/components/PropertyCard';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/app/components/ui/carousel';
 import { apiCall } from '@/lib/api';
 
 interface HomePageProps {
@@ -54,10 +61,10 @@ export function HomePage({ onNavigate }: HomePageProps) {
             transition={{ duration: 10, ease: "easeOut" }}
             src="https://images.unsplash.com/photo-1622015663381-d2e05ae91b72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjB2aWxsYSUyMG1vZGVybiUyMGFyY2hpdGVjdHVyZXxlbnwxfHx8fDE3Njk4Mjk2OTN8MA&ixlib=rb-4.1.0&q=80&w=2000"
             alt="Luxury Property"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover brightness-110 contrast-90 dark:brightness-100 dark:contrast-100"
           />
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px] dark:bg-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent dark:from-black dark:via-transparent dark:to-black/40" />
         </div>
 
         {/* Hero Content */}
@@ -77,7 +84,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               <span className="text-warm-brown text-[10px] tracking-[0.5em] uppercase font-medium">
                 {t('establishedTagline')}
               </span>
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif text-white leading-[0.9] text-balance">
+              <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif text-foreground dark:text-white leading-[0.9] text-balance">
                 {t('elevatedLiving')}
               </h1>
             </motion.div>
@@ -86,7 +93,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 1 }}
-              className="max-w-xl mx-auto text-white/50 text-sm md:text-base leading-relaxed tracking-wider font-light"
+              className="max-w-xl mx-auto text-muted-foreground dark:text-white/50 text-sm md:text-base leading-relaxed tracking-wider font-light"
             >
               {t('homeHeroDescription')}
             </motion.p>
@@ -99,13 +106,13 @@ export function HomePage({ onNavigate }: HomePageProps) {
             >
               <button
                 onClick={() => onNavigate('properties')}
-                className="group relative px-12 py-5 overflow-hidden border border-warm-brown text-white transition-all duration-500 hover:bg-warm-brown"
+                className="group relative px-12 py-5 overflow-hidden border border-border text-foreground transition-all duration-500 hover:bg-warm-brown hover:text-white dark:border-warm-brown dark:text-white"
               >
                 <span className="relative z-10 text-[10px] tracking-[0.4em] uppercase font-medium">{t('viewProperties')}</span>
               </button>
               <button
                 onClick={() => onNavigate('help')}
-                className="group flex items-center gap-4 text-white/80 hover:text-white transition-colors duration-300"
+                className="group flex items-center gap-4 text-muted-foreground hover:text-foreground dark:text-white/80 dark:hover:text-white transition-colors duration-300"
               >
                 <span className="text-[10px] tracking-[0.4em] uppercase font-medium">{t('estimateProperty')}</span>
                 <ArrowRight className="w-4 h-4 transform group-hover:translate-x-2 transition-transform duration-300" />
@@ -121,13 +128,13 @@ export function HomePage({ onNavigate }: HomePageProps) {
           transition={{ delay: 2, duration: 1 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
         >
-          <span className="text-[8px] tracking-[0.4em] text-white/30 uppercase font-medium rotate-90 mb-8 origin-center">{t('scroll')}</span>
+          <span className="text-[8px] tracking-[0.4em] text-muted-foreground/70 dark:text-white/30 uppercase font-medium rotate-90 mb-8 origin-center">{t('scroll')}</span>
           <div className="w-[1px] h-12 bg-gradient-to-t from-warm-brown to-transparent" />
         </motion.div>
       </section>
 
       {/* Recent Properties */}
-      <section className="py-32 bg-black">
+      <section className="py-32 bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8">
             <motion.div
@@ -137,7 +144,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               className="space-y-4"
             >
               <span className="text-warm-brown text-[10px] tracking-[0.4em] uppercase font-medium">{t('curatedCollection')}</span>
-              <h2 className="text-4xl md:text-5xl font-serif text-white">{t('recentProperties')}</h2>
+              <h2 className="text-4xl md:text-5xl font-serif text-foreground">{t('recentProperties')}</h2>
             </motion.div>
 
             <motion.button
@@ -145,38 +152,54 @@ export function HomePage({ onNavigate }: HomePageProps) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               onClick={() => onNavigate('properties')}
-              className="text-white/40 hover:text-white text-[10px] tracking-[0.4em] uppercase border-b border-white/10 pb-2 transition-colors duration-300"
+              className="text-muted-foreground hover:text-foreground text-[10px] tracking-[0.4em] uppercase border-b border-border pb-2 transition-colors duration-300"
             >
               {t('viewAllProperties')}
             </motion.button>
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div className="grid grid-cols-3 gap-6 lg:gap-12">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="aspect-[3/4] bg-white/5 animate-pulse" />
+                <div key={i} className="aspect-[3/4] bg-muted animate-pulse" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-24">
-              {recentProperties.map((property: any, index) => (
-                <motion.div
-                  key={property.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.2, duration: 0.8 }}
-                >
-                  <PropertyCard property={property} onNavigate={onNavigate} />
-                </motion.div>
-              ))}
-            </div>
+            <Carousel
+              opts={{ align: 'start', slidesToScroll: 3 }}
+              className="w-full px-1 sm:px-6"
+            >
+              <CarouselContent className="-ml-3 sm:-ml-6">
+                {recentProperties.map((property: any, index) => (
+                  <CarouselItem
+                    key={property.id}
+                    className="basis-1/3 pl-3 sm:pl-6"
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, y: 40 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1, duration: 0.8 }}
+                      className="h-full"
+                    >
+                      <PropertyCard property={property} onNavigate={onNavigate} />
+                    </motion.div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {recentProperties.length > 3 && (
+                <>
+                  <CarouselPrevious className="-left-3 sm:-left-5" />
+                  <CarouselNext className="-right-3 sm:-right-5" />
+                </>
+              )}
+            </Carousel>
           )}
         </div>
       </section>
 
       {/* Philosophy Section (Replacing Why Choose Us with something more premium) */}
-      <section className="py-40 bg-[#050505] border-t border-white/5">
+      <section className="py-40 bg-card border-t border-border">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
             <motion.div
@@ -202,8 +225,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 className="space-y-6"
               >
                 <span className="text-warm-brown text-[10px] tracking-[0.4em] uppercase font-medium">{t('ourPhilosophy')}</span>
-                <h2 className="text-5xl md:text-6xl font-serif text-white leading-tight">{t('beyondRealEstate')}</h2>
-                <p className="text-white/60 text-lg font-light leading-relaxed">
+                <h2 className="text-5xl md:text-6xl font-serif text-foreground leading-tight">{t('beyondRealEstate')}</h2>
+                <p className="text-muted-foreground text-lg font-light leading-relaxed">
                   {t('philosophyDescription')}
                 </p>
               </motion.div>
@@ -223,8 +246,8 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     key={i}
                     className="space-y-2"
                   >
-                    <h4 className="text-white font-serif text-xl">{item.title}</h4>
-                    <p className="text-white/40 text-sm font-light uppercase tracking-widest">{item.desc}</p>
+                    <h4 className="text-foreground font-serif text-xl">{item.title}</h4>
+                    <p className="text-muted-foreground text-sm font-light uppercase tracking-widest">{item.desc}</p>
                   </motion.div>
                 ))}
               </div>
@@ -234,7 +257,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-60 overflow-hidden border-t border-white/5">
+      <section className="relative py-60 overflow-hidden border-t border-border">
         <div className="absolute inset-0 grayscale brightness-50">
           <img
             src="https://images.unsplash.com/photo-1628592102751-ba8240275021?q=80&w=2070&auto=format&fit=crop"

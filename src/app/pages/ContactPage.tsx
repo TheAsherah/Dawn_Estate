@@ -7,9 +7,9 @@ export function ContactPage() {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-warm-brown pb-32">
+    <div className="min-h-screen bg-background text-foreground selection:bg-warm-brown pb-32">
       {/* Refined Header */}
-      <div className="pt-40 pb-20 border-b border-white/5">
+      <div className="pt-40 pb-20 border-b border-border">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -22,7 +22,7 @@ export function ContactPage() {
             <h1 className="text-5xl md:text-7xl font-serif">
               {t('contact')}
             </h1>
-            <p className="text-white/40 text-sm tracking-[0.2em] uppercase font-light max-w-2xl">
+            <p className="text-muted-foreground text-sm tracking-[0.2em] uppercase font-light max-w-2xl">
               {t('contactIntro')}
             </p>
           </motion.div>
@@ -41,55 +41,55 @@ export function ContactPage() {
           >
             <div className="space-y-6">
               <h2 className="text-3xl font-serif">DAWN ESTATE</h2>
-              <p className="text-white/50 leading-relaxed font-light text-sm max-w-md">
+              <p className="text-muted-foreground leading-relaxed font-light text-sm max-w-md">
                 {t('aboutText')}
               </p>
             </div>
 
             <div className="space-y-12">
               <div className="flex items-start space-x-8 group">
-                <div className="w-10 h-10 border border-white/10 flex items-center justify-center transition-colors group-hover:border-warm-brown">
+                <div className="w-10 h-10 border border-border flex items-center justify-center transition-colors group-hover:border-warm-brown">
                   <Mail className="w-4 h-4 text-warm-brown" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('email')}</h3>
+                  <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('email')}</h3>
                   <div className="space-y-1">
-                    <p className="text-white/80 font-light hover:text-warm-brown transition-colors cursor-pointer">contact@dawnestate.com</p>
-                    <p className="text-white/80 font-light hover:text-warm-brown transition-colors cursor-pointer">concierge@dawnestate.com</p>
+                    <p className="text-foreground/80 font-light hover:text-warm-brown transition-colors cursor-pointer">contact@dawnestate.com</p>
+                    <p className="text-foreground/80 font-light hover:text-warm-brown transition-colors cursor-pointer">concierge@dawnestate.com</p>
                   </div>
                 </div>
               </div>
 
               <div className="flex items-start space-x-8 group">
-                <div className="w-10 h-10 border border-white/10 flex items-center justify-center transition-colors group-hover:border-warm-brown">
+                <div className="w-10 h-10 border border-border flex items-center justify-center transition-colors group-hover:border-warm-brown">
                   <Phone className="w-4 h-4 text-warm-brown" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('phone')}</h3>
+                  <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('phone')}</h3>
                   <div className="space-y-1">
-                    <a href="https://wa.me/212762829992" target="_blank" rel="noreferrer" className="text-white/80 font-light hover:text-warm-brown transition-colors">+212 762-829992 (WhatsApp)</a>
-                    <p className="text-white/80 font-light">+212 524 XX XX XX</p>
+                    <a href="https://wa.me/212762829992" target="_blank" rel="noreferrer" className="text-foreground/80 font-light hover:text-warm-brown transition-colors">+212 762-829992 (WhatsApp)</a>
+                    <p className="text-foreground/80 font-light">+212 524 XX XX XX</p>
                   </div>
                 </div>
               </div>
 
               <div className="flex items-start space-x-8 group">
-                <div className="w-10 h-10 border border-white/10 flex items-center justify-center transition-colors group-hover:border-warm-brown">
+                <div className="w-10 h-10 border border-border flex items-center justify-center transition-colors group-hover:border-warm-brown">
                   <MapPin className="w-4 h-4 text-warm-brown" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('address')}</h3>
+                  <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('address')}</h3>
                   <div className="space-y-1">
-                    <p className="text-white/80 font-light">Hivernage, Marrakech</p>
-                    <p className="text-white/80 font-light">{t('kingdomOfMorocco')}</p>
+                    <p className="text-foreground/80 font-light">Hivernage, Marrakech</p>
+                    <p className="text-foreground/80 font-light">{t('kingdomOfMorocco')}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Social Media */}
-            <div className="pt-12 border-t border-white/5 space-y-6">
-              <h3 className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('followUs')}</h3>
+            <div className="pt-12 border-t border-border space-y-6">
+              <h3 className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('followUs')}</h3>
               <div className="flex space-x-8">
                 {[
                   { icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/' },
@@ -103,7 +103,7 @@ export function ContactPage() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={social.label}
-                    className="text-white/40 hover:text-warm-brown transition-colors duration-500"
+                    className="text-muted-foreground hover:text-warm-brown transition-colors duration-500"
                   >
                     <social.icon className="w-5 h-5" />
                   </a>

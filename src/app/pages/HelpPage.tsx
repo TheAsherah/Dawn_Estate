@@ -125,9 +125,9 @@ export function HelpPage({ onNavigate }: HelpPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-warm-brown pb-32">
+    <div className="min-h-screen bg-background text-foreground selection:bg-warm-brown pb-32">
       {/* Refined Header */}
-      <div className="pt-40 pb-20 border-b border-white/5">
+      <div className="pt-40 pb-20 border-b border-border">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -140,7 +140,7 @@ export function HelpPage({ onNavigate }: HelpPageProps) {
             <h1 className="text-5xl md:text-7xl font-serif">
               {t('estimateTitle')}
             </h1>
-            <p className="text-white/40 text-sm tracking-[0.2em] uppercase font-light max-w-2xl">
+            <p className="text-muted-foreground text-sm tracking-[0.2em] uppercase font-light max-w-2xl">
               {t('estimateSubtitle')}
             </p>
           </motion.div>
@@ -153,58 +153,58 @@ export function HelpPage({ onNavigate }: HelpPageProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-[#0a0a0a] border border-white/5 p-12 md:p-16 space-y-12"
+          className="bg-card border border-border p-12 md:p-16 space-y-12"
         >
           <form onSubmit={handleSubmit} className="space-y-12">
             {/* Contact Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-3">
-                <Label htmlFor="name" className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('name')}</Label>
+                <Label htmlFor="name" className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('name')}</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
-                  className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                  className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
                 />
               </div>
               <div className="space-y-3">
-                <Label htmlFor="email" className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('email')}</Label>
+                <Label htmlFor="email" className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('email')}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
-                  className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                  className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
                 />
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('phone')}</Label>
+              <Label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('phone')}</Label>
               <Input
                 id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
               />
             </div>
 
             {/* Property Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-3">
-                <Label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('propertyType')}</Label>
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('propertyType')}</Label>
                 <Select
                   value={formData.propertyType}
                   onValueChange={(value) => setFormData({ ...formData, propertyType: value })}
                   required
                 >
-                  <SelectTrigger className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest">
+                  <SelectTrigger className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest">
                     <SelectValue placeholder={t('selectCategory')} />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0a0a0a] border-white/10 rounded-none text-xs">
+                  <SelectContent className="bg-card border-border rounded-none text-xs">
                     <SelectItem value="villa" className="focus:bg-warm-brown focus:text-white rounded-none">{t('villa')}</SelectItem>
                     <SelectItem value="house" className="focus:bg-warm-brown focus:text-white rounded-none">{t('house')}</SelectItem>
                     <SelectItem value="apartment" className="focus:bg-warm-brown focus:text-white rounded-none">{t('apartment')}</SelectItem>
@@ -215,34 +215,34 @@ export function HelpPage({ onNavigate }: HelpPageProps) {
                 </Select>
               </div>
               <div className="space-y-3">
-                <Label htmlFor="city" className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('city')}</Label>
+                <Label htmlFor="city" className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('city')}</Label>
                 <Input
                   id="city"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                  className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
                 />
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="surface" className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('surface')} (m²)</Label>
+              <Label htmlFor="surface" className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('surface')} (m²)</Label>
               <Input
                 id="surface"
                 type="number"
                 value={formData.surface}
                 onChange={(e) => setFormData({ ...formData, surface: e.target.value })}
-                className="bg-transparent border-white/10 rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
+                className="bg-background border-border rounded-none h-14 focus:border-warm-brown transition-colors text-xs tracking-widest"
               />
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="message" className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('message')}</Label>
+              <Label htmlFor="message" className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('message')}</Label>
               <Textarea
                 id="message"
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="bg-transparent border-white/10 rounded-none focus:border-warm-brown transition-colors text-xs tracking-widest min-h-[150px] p-4"
+                className="bg-background border-border rounded-none focus:border-warm-brown transition-colors text-xs tracking-widest min-h-[150px] p-4"
                 rows={4}
               />
             </div>
@@ -251,10 +251,10 @@ export function HelpPage({ onNavigate }: HelpPageProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               {/* Images */}
               <div className="space-y-6">
-                <Label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('uploadImages')}</Label>
-                <label className="flex flex-col items-center justify-center w-full aspect-video border border-dashed border-white/10 hover:border-warm-brown transition-all duration-500 cursor-pointer group bg-black/40">
-                  <Upload className="w-5 h-5 text-white/20 group-hover:text-warm-brown mb-4 transition-colors" />
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-white/20 group-hover:text-white transition-colors">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('uploadImages')}</Label>
+                <label className="flex flex-col items-center justify-center w-full aspect-video border border-dashed border-border hover:border-warm-brown transition-all duration-500 cursor-pointer group bg-muted/70">
+                  <Upload className="w-5 h-5 text-muted-foreground group-hover:text-warm-brown mb-4 transition-colors" />
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground group-hover:text-foreground transition-colors">
                     {uploadingImages ? t('loading') : t('uploadImages')}
                   </span>
                   <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" />
@@ -263,7 +263,7 @@ export function HelpPage({ onNavigate }: HelpPageProps) {
                 {formData.images.length > 0 && (
                   <div className="grid grid-cols-4 gap-4">
                     {formData.images.map((img, i) => (
-                      <div key={i} className="relative aspect-square border border-white/10">
+                      <div key={i} className="relative aspect-square border border-border">
                         <img src={img} className="w-full h-full object-cover" />
                         <button onClick={() => removeImage(i)} className="absolute -top-2 -right-2 bg-white text-black p-1 hover:bg-warm-brown hover:text-white transition-colors">
                           <X className="w-3 h-3" />
@@ -276,10 +276,10 @@ export function HelpPage({ onNavigate }: HelpPageProps) {
 
               {/* Videos */}
               <div className="space-y-6">
-                <Label className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{t('uploadVideos')}</Label>
-                <label className="flex flex-col items-center justify-center w-full aspect-video border border-dashed border-white/10 hover:border-warm-brown transition-all duration-500 cursor-pointer group bg-black/40">
-                  <Upload className="w-5 h-5 text-white/20 group-hover:text-warm-brown mb-4 transition-colors" />
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-white/20 group-hover:text-white transition-colors">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">{t('uploadVideos')}</Label>
+                <label className="flex flex-col items-center justify-center w-full aspect-video border border-dashed border-border hover:border-warm-brown transition-all duration-500 cursor-pointer group bg-muted/70">
+                  <Upload className="w-5 h-5 text-muted-foreground group-hover:text-warm-brown mb-4 transition-colors" />
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground group-hover:text-foreground transition-colors">
                     {uploadingVideos ? t('loading') : t('uploadVideos')}
                   </span>
                   <input type="file" accept="video/*" multiple onChange={handleVideoUpload} className="hidden" />
@@ -288,7 +288,7 @@ export function HelpPage({ onNavigate }: HelpPageProps) {
                 {formData.videos.length > 0 && (
                   <div className="grid grid-cols-4 gap-4">
                     {formData.videos.map((vid, i) => (
-                      <div key={i} className="relative aspect-square border border-white/10 flex items-center justify-center overflow-hidden">
+                      <div key={i} className="relative aspect-square border border-border flex items-center justify-center overflow-hidden">
                         <video src={vid} className="w-full h-full object-cover" />
                         <button onClick={() => removeVideo(i)} className="absolute -top-2 -right-2 bg-white text-black p-1 hover:bg-warm-brown hover:text-white transition-colors">
                           <X className="w-3 h-3" />
