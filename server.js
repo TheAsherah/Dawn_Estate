@@ -1,4 +1,7 @@
 import { register } from 'tsx/esm/api';
 
 register();
-await import('./server/index.ts');
+import('./server/index.ts').catch((error) => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
+});
